@@ -1,8 +1,8 @@
 package com.leverx.projectmanagement.model;
 
 public enum ProjectStatus {
-  DELAYED,
-  COMPLETED,
+  PLANNED,
   IN_PROGRESS,
-  PLANNED
+  COMPLETED,
+  DELAYED
 }

@@ -1,12 +1,20 @@
 package com.leverx.projectmanagement.service;
 
+import com.leverx.projectmanagement.dto.DelayedProjectDTO;
+import com.leverx.projectmanagement.dto.DelayedProjectsByPmDTO;
+import com.leverx.projectmanagement.dto.ProjectCategoryGroupDTO;
 import com.leverx.projectmanagement.dto.ProjectDTO;
 import com.leverx.projectmanagement.model.Project;
 import com.leverx.projectmanagement.model.ProjectCategory;
+import com.leverx.projectmanagement.model.ProjectStatus;
 import com.leverx.projectmanagement.repository.ProjectCategoryRepository;
 import com.leverx.projectmanagement.repository.ProjectRepository;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -72,5 +80,57 @@ public class ProjectService {
 
   public void deleteProject(Long id) {
     projectRepository.deleteById(id);
+  }
+
+  public BigDecimal getTotalRevenueForYear(int year) {
+    LocalDate startOfYear = LocalDate.of(year, 1, 1);
+    LocalDate endOfYear = LocalDate.of(year, 12, 31);
+    Optional<BigDecimal> totalRevenue = projectRepository.getTotalRevenueBetween(startOfYear, endOfYear);
+    return totalRevenue.orElse(BigDecimal.ZERO);
+  }
+
+  public List<ProjectCategoryGroupDTO> getProjectsGroupedByCategory() {
+    List<Project> projects = projectRepository.findAll();
+
+    return projects.stream()
+        .collect(Collectors.groupingBy(
+            p -> p.getCategory().getId(),
+            Collectors.toList()
+        ))
+        .values()
+        .stream()
+        .map(projectList -> {
+          ProjectCategory category = projectList.getFirst().getCategory();
+          return new ProjectCategoryGroupDTO(
+              category.getId(),
+              category.getName(),
+              projectList
+          );
+        })
+        .collect(Collectors.toList());
+  }
+
+  public List<DelayedProjectsByPmDTO> getDelayedProjectsGroupedByPm() {
+    List<Project> delayedProjects = projectRepository.findByStatus(ProjectStatus.DELAYED);
+
+    Map<String, List<DelayedProjectDTO>> grouped = delayedProjects.stream()
+        .collect(Collectors.groupingBy(
+            Project::getPmName,
+            Collectors.mapping(p -> new DelayedProjectDTO(
+                p.getProjectName(),
+                p.getPlannedRate(),
+                p.getActualRate(),
+                calculateDeviation(p)
+            ), Collectors.toList())
+        ));
+
+    return grouped.entrySet().stream()
+        .map(entry -> new DelayedProjectsByPmDTO(entry.getKey(), entry.getValue()))
+        .collect(Collectors.toList());
+  }
+
+  private Double calculateDeviation(Project p) {
+    if (p.getActualRate() == null || p.getPlannedRate() == null) return null;
+    return p.getActualRate() - p.getPlannedRate();
   }
 }
