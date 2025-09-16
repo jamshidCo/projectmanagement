@@ -1,19 +1,24 @@
 package com.leverx.projectmanagement.service;
 
+import com.leverx.projectmanagement.dto.ProjectDTO;
 import com.leverx.projectmanagement.model.Project;
+import com.leverx.projectmanagement.model.ProjectCategory;
+import com.leverx.projectmanagement.repository.ProjectCategoryRepository;
 import com.leverx.projectmanagement.repository.ProjectRepository;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectService {
 
   private final ProjectRepository projectRepository;
+  private final ProjectCategoryRepository projectCategoryRepository;
 
-  public ProjectService(ProjectRepository projectRepository) {
+  public ProjectService(ProjectRepository projectRepository,
+      ProjectCategoryRepository projectCategoryRepository) {
     this.projectRepository = projectRepository;
+    this.projectCategoryRepository = projectCategoryRepository;
   }
 
   public List<Project> getAllProjects() {
@@ -24,7 +29,22 @@ public class ProjectService {
     return projectRepository.findById(id);
   }
 
-  public Project save(Project project) {
+  public Project save(ProjectDTO projectDto) {
+    Optional<ProjectCategory> optionalProjectCategory = projectCategoryRepository.findById(
+        projectDto.getCategoryId());
+    Project project = new Project();
+    if (optionalProjectCategory.isPresent()) {
+      project.setProjectName(projectDto.getProjectName());
+      project.setRevenue(projectDto.getRevenue());
+      project.setStartDate(projectDto.getStartDate());
+      project.setEndDate(projectDto.getEndDate());
+      project.setWorkingDays(projectDto.getWorkingDays());
+      project.setPmName(projectDto.getPmName());
+      project.setPlannedRate(projectDto.getPlannedRate());
+      project.setActualRate(projectDto.getActualRate());
+      project.setStatus(projectDto.getStatus());
+      project.setCategory(optionalProjectCategory.get());
+    }
     return projectRepository.save(project);
   }
 

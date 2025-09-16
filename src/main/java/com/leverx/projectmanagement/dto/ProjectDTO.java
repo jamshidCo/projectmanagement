@@ -1,5 +1,6 @@
 package com.leverx.projectmanagement.dto;
 
+import com.leverx.projectmanagement.model.ProjectStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.Data;
@@ -7,7 +8,7 @@ import lombok.Data;
 @Data
 public class ProjectDTO {
   private String projectName;
-  private String category;
+  private Long categoryId;
   private BigDecimal revenue;
   private LocalDate startDate;
   private LocalDate endDate;
@@ -15,5 +16,5 @@ public class ProjectDTO {
   private String pmName;
   private Double plannedRate;
   private Double actualRate;
-  private String status;
+  private ProjectStatus status;
 }
