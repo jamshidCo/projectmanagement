@@ -1,20 +1,58 @@
 # ProjectManagement
 
-ProjectManagement is an application implemented using React, Java/Spring Boot and SQLite.
+Project stack:
+- Backend: Spring Boot (Java 21) + SQLite
+- Frontend: Next.js (React / TypeScript / Mantine)
+- Orchestration: Docker Compose
 
-## Running project locally
+---
+## Prerequisites
+Java 21, Maven 3.9+, Node 20, Docker (Compose v2). Optional: HTTP client for API tests (`test.http`).
 
-Use the package manager [maven](https://maven.apache.org/) to run locally.
-
+---
+## Quick Start (Containers)
 ```bash
-# maven
-mvn clean install
-mvn spring-boot:run
+docker compose up --build           # Backend:8080 Frontend:3000
+```
+Stop & remove (keep DB volume):
+```bash
+docker compose down
+```
+Reset (also remove SQLite volume):
+```bash
+docker compose down -v
 ```
 
-## Contributing
+---
+## Local Dev (Hot Reload)
+Backend:
+```bash
+cd backend
+mvn spring-boot:run
+```
+Frontend:
+```bash
+cd frontend
+echo "NEXT_PUBLIC_API_URL=http://localhost:8080/api" > .env.local
+npm install
+npm run dev
+```
+Open: http://localhost:3000
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change, suppose new custom handlers or entities.
+---
+## Common Commands
+```bash
+mvn -f backend/pom.xml test         # Backend tests
+cd frontend && npm test             # Frontend tests
+docker compose logs -f backend      # Tail backend
+docker compose build backend        # Rebuild only backend
+```
 
-Please make sure to update tests as appropriate.
+---
+## Environment
+Backend override DB path:
+```bash
+cd backend
+SPRING_DATASOURCE_URL=jdbc:sqlite:./pm.db mvn spring-boot:run
+```
+Frontend API base (public): `NEXT_PUBLIC_API_URL`.

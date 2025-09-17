@@ -32,5 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 
+backend/*.db
  *.db
  *.http
+
+data
