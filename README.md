@@ -56,3 +56,23 @@ cd backend
 SPRING_DATASOURCE_URL=jdbc:sqlite:./pm.db mvn spring-boot:run
 ```
 Frontend API base (public): `NEXT_PUBLIC_API_URL`.
+
+---
+## Export Images (Tar creation)
+Build images:
+```bash
+docker build -t projectmanagement-backend:1.0 ./backend
+docker build -t projectmanagement-frontend:1.0 ./frontend
+```
+Save both into one compressed archive:
+```bash
+docker save projectmanagement-backend:1.0 projectmanagement-frontend:1.0 | gzip > projectmanagement-images-1.0.tar.gz
+```
+Load on another machine:
+```bash
+gunzip -c projectmanagement-images-1.0.tar.gz | docker load
+```
+Verify:
+```bash
+docker images | grep projectmanagement
+```

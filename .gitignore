@@ -37,3 +37,7 @@ backend/*.db
  *.http
 
 data
+
+### Tar files
+*.tar
+*.tar.gz

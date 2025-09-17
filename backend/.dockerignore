@@ -1,0 +1,23 @@
+# Maven / build outputs
+target
+
+# IDE / tooling
+.idea
+*.iml
+.project
+.classpath
+.settings
+
+# Version control
+.git
+.gitignore
+
+# OS
+.DS_Store
+
+# Logs / temp
+*.log
+hs_err_pid*
+
+# Other
+node_modules

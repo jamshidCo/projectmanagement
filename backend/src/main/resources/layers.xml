@@ -1,0 +1,23 @@
+<layers xmlns="http://spring.io/schema/boot/layers"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://spring.io/schema/boot/layers https://spring.io/schema/boot/layers/layers.xsd">
+  <application>
+    <into layer="app-classes">
+      <include>com/leverx/projectmanagement/**</include>
+    </into>
+    <into layer="application"/>
+  </application>
+  <dependencies>
+    <into layer="snapshot-deps">
+      <include>*:*:*SNAPSHOT</include>
+    </into>
+    <into layer="third-party"/>
+  </dependencies>
+  <layerOrder>
+    <layer>third-party</layer>
+    <layer>spring-boot-loader</layer>
+    <layer>snapshot-deps</layer>
+    <layer>app-classes</layer>
+    <layer>application</layer>
+  </layerOrder>
+</layers>

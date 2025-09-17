@@ -66,6 +66,7 @@ export const CreateProjectModal = ({ opened, onClose, handleProjectCreated }: Pr
         endDate,
         workingDays: days,
         status: STATUSES.PLANNED,
+        actualRate: 0,
       };
       await createProject(newProject);
       onClose();
