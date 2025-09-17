@@ -2,7 +2,7 @@ import { IconCircleCheck, IconClock, IconList, IconLoader2, IconX } from '@table
 import { Flex, Loader } from '@mantine/core';
 import { ProjectStatsCard } from '@/components/ProjectStatsCard/ProjectStatsCard';
 import { STATUSES } from '@/constants/statuses';
-import { StatusCountResponse, useProjectStatusCounts } from '@/hooks/useProjects';
+import { StatusCountResponse } from '@/hooks/useProjects';
 import styles from './ProjectStatsGrid.module.css';
 
 const statusStats = [
@@ -33,17 +33,20 @@ const statusStats = [
   { status: STATUSES.DELAYED, label: 'Delayed', icon: <IconX size={24} />, color: 'red' },
 ];
 
-export function ProjectStatsGrid() {
-  const { data: statusCounts, isLoading } = useProjectStatusCounts();
-
-  if (isLoading) {
+export function ProjectStatsGrid({
+  statusCounts,
+  isLoading,
+}: {
+  statusCounts?: StatusCountResponse;
+  isLoading: boolean;
+}) {
+  if (isLoading || !statusCounts) {
     return (
       <div className={styles.loader}>
         <Loader color="blue" />
       </div>
     );
   }
-
 
   const stats = statusStats.map((stat) => ({
     ...stat,

@@ -19,6 +19,8 @@ export type CreateProject = {
   revenue: number;
   startDate: string;
   endDate: string;
+  pmName?: string;
+  plannedRate?: number;
   workingDays: number;
   categoryId: Category['id'];
   status: ProjectStatus;

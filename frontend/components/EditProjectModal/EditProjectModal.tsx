@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Flex, NativeSelect, NumberInput, TextInput } from '@mantine/core';
+import { Box, Flex, NativeSelect, NumberInput, TextInput } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { EMPTY_FIELD, REVERSED_DATE } from '@/constants/form';
 import { STATUSES } from '@/constants/statuses';
@@ -39,6 +39,7 @@ export const EditProjectModal = ({ onClose, project, refetchProjects }: Props) =
   }, [project]);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isTriedToSave, setIsTriedToSave] = useState(false);
 
   const { data: categories, isFetching } = useCategories();
 
@@ -65,6 +66,7 @@ export const EditProjectModal = ({ onClose, project, refetchProjects }: Props) =
   };
 
   const handleApply = async () => {
+    setIsTriedToSave(true);
     setIsLoading(true);
 
     const categoryId: number | undefined = categories?.find((cat) => cat.name === categoryName)?.id;
@@ -88,15 +90,18 @@ export const EditProjectModal = ({ onClose, project, refetchProjects }: Props) =
         startDate,
         endDate,
         workingDays: days,
+        pmName: project?.pmName,
         status,
+        plannedRate,
         actualRate: actual,
       };
       await editProject(projectId, editedProject);
       onClose();
       clearFields();
       refetchProjects();
-      setIsLoading(false);
+      setIsTriedToSave(false);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -108,54 +113,56 @@ export const EditProjectModal = ({ onClose, project, refetchProjects }: Props) =
       isLoading={isLoading || isFetching}
     >
       <>
-        <TextInput
-          label="Project name"
-          placeholder="Type project name..."
-          value={name}
-          onChange={(event) => setName(event.currentTarget.value)}
-          error={nameError}
-        />
-        <Flex gap="md">
+        <Box h="80px">
+          <TextInput
+            label="Project name"
+            placeholder="Type project name..."
+            value={name}
+            onChange={(event) => setName(event.currentTarget.value)}
+            error={isTriedToSave && nameError}
+          />
+        </Box>
+        <Flex gap="md" align="start" h="80px">
           <NativeSelect
             label="Project category"
             value={categoryName}
             onChange={(event) => setCategoryName(event.currentTarget.value)}
             data={categories?.map(({ name }) => name)}
-            error={categoryError}
+            error={isTriedToSave && categoryError}
           />
           <NumberInput
             label="Sales revenue"
             placeholder="Type project revenue"
             value={revenue}
             onChange={(event) => setRevenue(Number(event))}
-            error={revenueError}
+            error={isTriedToSave && revenueError}
           />
           <NativeSelect
             label="Status"
             value={status}
             onChange={(event) => setStatus(event.currentTarget.value as ProjectStatus)}
             data={Object.values(STATUSES)}
-            error={statusError}
+            error={isTriedToSave && statusError}
           />
         </Flex>
-        <Flex gap="md" align="center">
+        <Flex gap="md" align="start" h="90px">
           <DateInput
             label="Start date"
             placeholder="Choose start date"
             value={startDate}
             onChange={setStartDate}
-            error={startDateEror}
+            error={isTriedToSave && startDateEror}
           />
           <DateInput
             label="End date"
             placeholder="Choose end date"
             value={endDate}
             onChange={setEndDate}
-            error={endDateError}
+            error={isTriedToSave && endDateError}
           />
           <TextInput label="Working days" value={days} disabled />
         </Flex>
-        <Flex gap="md" align="center">
+        <Flex gap="md" align="start" h="60px">
           <NumberInput
             label="Plan %"
             placeholder="Project planned rate"
@@ -167,7 +174,7 @@ export const EditProjectModal = ({ onClose, project, refetchProjects }: Props) =
             placeholder="Type project actual rate"
             value={actualRate}
             onChange={(event) => setActualRate(Number(event))}
-            error={actualError}
+            error={isTriedToSave && actualError}
           />
         </Flex>
       </>

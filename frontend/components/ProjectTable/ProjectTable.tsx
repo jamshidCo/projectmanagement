@@ -17,14 +17,13 @@ import { ProjectHeader } from '@/components/ProjectHeader/ProjectHeader';
 import { ProjectRevenueModal } from '@/components/ProjectRevenueModal/ProjectRevenueModal';
 import { STATUSES } from '@/constants/statuses';
 import { deleteProject, useProjectsPagination } from '@/hooks/useProjects';
-
 import { Project } from '@/types/project';
 import { EditProjectModal } from '../EditProjectModal/EditProjectModal';
 import styles from './ProjectTable.module.css';
 
 const PAGE_SIZE = 10;
 
-export default function ProjectTable() {
+export default function ProjectTable({ onProjectChanged }: { onProjectChanged: () => void }) {
   const [page, setPage] = useState(1);
   const [selectedEditProject, setSelectedEditProject] = useState<Project | undefined>();
   const [selectedRevenueProject, setSelectedRevenueProject] = useState<Project | undefined>();
@@ -41,6 +40,7 @@ export default function ProjectTable() {
     try {
       await deleteProject(projectId);
       refetch();
+      onProjectChanged();
     } catch (error) {
       console.error('Error during project deletion', error);
     }
@@ -49,6 +49,7 @@ export default function ProjectTable() {
   const handleProjectCreated = () => {
     refetch();
     setPage(totalPages);
+    onProjectChanged();
   };
 
   return (

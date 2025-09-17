@@ -29,38 +29,38 @@ export const ProjectRevenueModal = ({ onClose, project }: Props) => {
   });
 
   return (
-      <CustomModal title="Project Monthly Sales" opened={!!project} onClose={onClose}>
-        <Box mb="md">
-          <TextInput label="Project name" value={projectName} readOnly />
-        </Box>
+    <CustomModal title="Project Monthly Sales" opened={!!project} onClose={onClose}>
+      <Box mb="md">
+        <TextInput label="Project name" value={projectName} readOnly />
+      </Box>
 
-        <Box>
-          <Title order={5} mb="sm">
-            Monthly breakdown
-          </Title>
-          <Table striped withTableBorder withColumnBorders highlightOnHover>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th style={{ width: '60%' }}>Month</Table.Th>
-                <Table.Th>Revenue</Table.Th>
+      <Box>
+        <Title order={5} mb="sm">
+          Monthly breakdown
+        </Title>
+        <Table striped withTableBorder withColumnBorders highlightOnHover>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th style={{ width: '60%' }}>Month</Table.Th>
+              <Table.Th>Revenue</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {monthlyRows.map((row) => (
+              <Table.Tr key={row.month}>
+                <Table.Td>{row.month}</Table.Td>
+                <Table.Td>{row.amount.toLocaleString()}</Table.Td>
               </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {monthlyRows.map((row) => (
-                  <Table.Tr key={row.month}>
-                    <Table.Td>{row.month}</Table.Td>
-                    <Table.Td>{row.amount.toLocaleString()}</Table.Td>
-                  </Table.Tr>
-              ))}
-              <Table.Tr>
-                <Table.Td style={{ fontWeight: 600 }}>Total</Table.Td>
-                <Table.Td style={{ fontWeight: 600, color: '#228be6' }}>
-                  {revenue.toLocaleString()}
-                </Table.Td>
-              </Table.Tr>
-            </Table.Tbody>
-          </Table>
-        </Box>
-      </CustomModal>
+            ))}
+            <Table.Tr>
+              <Table.Td style={{ fontWeight: 600 }}>Total</Table.Td>
+              <Table.Td style={{ fontWeight: 600, color: '#228be6' }}>
+                {revenue.toLocaleString()}
+              </Table.Td>
+            </Table.Tr>
+          </Table.Tbody>
+        </Table>
+      </Box>
+    </CustomModal>
   );
 };
