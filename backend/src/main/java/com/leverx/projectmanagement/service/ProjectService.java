@@ -154,10 +154,6 @@ public class ProjectService {
       LocalDate endDate = project.getEndDate();
       BigDecimal totalRevenue = project.getRevenue();
 
-      if (startDate == null || endDate == null || totalRevenue == null) {
-        continue;
-      }
-
       long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
       YearMonth startMonth = YearMonth.from(startDate);
       YearMonth endMonth = YearMonth.from(endDate);
