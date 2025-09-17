@@ -1,0 +1,19 @@
+GET localhost:8080/api/projects
+Content-Type: application/json
+
+###
+POST localhost:8080/api/projects
+Content-Type: application/json
+
+{
+  "projectName": "Smart Platform",
+  "category": "SI",
+  "revenue": 50000,
+  "startDate": "2025-09-01",
+  "endDate": "2025-10-31",
+  "workingDays": 61,
+  "pmName": "John",
+  "plannedRate": 14,
+  "actualRate": 10,
+  "status": "IN_PROGRESS"
+}
