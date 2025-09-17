@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  projectmanagement-app:
+    build: ..
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app       # persist pm.db file
+    restart: unless-stopped

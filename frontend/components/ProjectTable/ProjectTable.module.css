@@ -1,0 +1,32 @@
+.table {
+  background: white;
+}
+.projectNameHeaderCell {
+  padding-left: 26px;
+}
+
+.revenueHeaderCell {
+  padding-right: 26px;
+}
+
+.centerAlign {
+  text-align: center;
+}
+
+.rightAlign {
+  text-align: right;
+}
+
+.leftAlign {
+  text-align: left;
+}
+
+.hoveredButton:hover {
+  text-decoration: underline;
+}
+
+.paginationWrapper {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
