@@ -1,5 +1,6 @@
 package com.leverx.projectmanagement.service;
 
+import com.leverx.projectmanagement.handler.ResourceNotFoundException;
 import com.leverx.projectmanagement.model.ProjectCategory;
 import com.leverx.projectmanagement.repository.ProjectCategoryRepository;
 import java.util.List;
@@ -28,6 +29,9 @@ public class ProjectCategoryService {
   }
 
   public void deleteProjectCategory(Long id) {
+    projectCategoryRepository.findById(id).orElseThrow(
+        () -> new ResourceNotFoundException("ProjectCategory not found with id: " + id));
+
     projectCategoryRepository.deleteById(id);
   }
 }

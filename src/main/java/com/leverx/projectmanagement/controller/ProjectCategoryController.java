@@ -45,9 +45,6 @@ public class ProjectCategoryController {
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteProjectCategory(@PathVariable Long id) {
-    if (!projectCategoryService.getProjectCategoryById(id).isPresent()) {
-      return ResponseEntity.notFound().build();
-    }
     projectCategoryService.deleteProjectCategory(id);
     return ResponseEntity.noContent().build();
   }

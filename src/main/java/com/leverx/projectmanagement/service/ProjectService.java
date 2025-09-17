@@ -4,6 +4,7 @@ import com.leverx.projectmanagement.dto.DelayedProjectDTO;
 import com.leverx.projectmanagement.dto.DelayedProjectsByPmDTO;
 import com.leverx.projectmanagement.dto.ProjectCategoryGroupDTO;
 import com.leverx.projectmanagement.dto.ProjectDTO;
+import com.leverx.projectmanagement.handler.ResourceNotFoundException;
 import com.leverx.projectmanagement.model.Project;
 import com.leverx.projectmanagement.model.ProjectCategory;
 import com.leverx.projectmanagement.model.ProjectStatus;
@@ -56,36 +57,40 @@ public class ProjectService {
     return projectRepository.save(project);
   }
 
-//  public Project update(Project newProject, String id) {
-//    Optional<Project> optionalProject = projectRepository.findById(id);
-//    if (optionalProject.isPresent()) {
-//      Project project = optionalProject.get();
-//
-//      project.setProjectName(newProject.getProjectName());
-//      project.setCategory(newProject.getCategory());
-//      project.setRevenue(newProject.getRevenue());
-//      project.setStartDate(newProject.getStartDate());
-//      project.setEndDate(newProject.getEndDate());
-//      project.setWorkingDays(newProject.getWorkingDays());
-//      project.setPmName(newProject.getPmName());
-//      project.setPlannedRate(newProject.getPlannedRate());
-//      project.setActualRate(newProject.getActualRate());
-//      project.setStatus(newProject.getStatus());
-//
-//      return projectRepository.save(project);
-//    } else {
-//      return null;
-//    }
-//  }
+  public Project update(ProjectDTO newProject, Long id) {
+    Project project = projectRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
+
+    ProjectCategory projectCategory = projectCategoryRepository.findById(newProject.getCategoryId())
+        .orElseThrow(() -> new ResourceNotFoundException(
+            "ProjectCategory not found with id: " + newProject.getCategoryId()));
+
+    project.setProjectName(newProject.getProjectName());
+    project.setCategory(projectCategory);
+    project.setRevenue(newProject.getRevenue());
+    project.setStartDate(newProject.getStartDate());
+    project.setEndDate(newProject.getEndDate());
+    project.setWorkingDays(newProject.getWorkingDays());
+    project.setPmName(newProject.getPmName());
+    project.setPlannedRate(newProject.getPlannedRate());
+    project.setActualRate(newProject.getActualRate());
+    project.setStatus(newProject.getStatus());
+
+    return projectRepository.save(project);
+
+  }
 
   public void deleteProject(Long id) {
+    projectRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
     projectRepository.deleteById(id);
   }
 
   public BigDecimal getTotalRevenueForYear(int year) {
     LocalDate startOfYear = LocalDate.of(year, 1, 1);
     LocalDate endOfYear = LocalDate.of(year, 12, 31);
-    Optional<BigDecimal> totalRevenue = projectRepository.getTotalRevenueBetween(startOfYear, endOfYear);
+    Optional<BigDecimal> totalRevenue = projectRepository.getTotalRevenueBetween(startOfYear,
+        endOfYear);
     return totalRevenue.orElse(BigDecimal.ZERO);
   }
 
@@ -130,7 +135,9 @@ public class ProjectService {
   }
 
   private Double calculateDeviation(Project p) {
-    if (p.getActualRate() == null || p.getPlannedRate() == null) return null;
+    if (p.getActualRate() == null || p.getPlannedRate() == null) {
+      return null;
+    }
     return p.getActualRate() - p.getPlannedRate();
   }
 }
