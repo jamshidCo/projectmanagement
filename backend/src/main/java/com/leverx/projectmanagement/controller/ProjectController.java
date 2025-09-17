@@ -3,6 +3,7 @@ package com.leverx.projectmanagement.controller;
 import com.leverx.projectmanagement.dto.ProjectDTO;
 import com.leverx.projectmanagement.model.Project;
 import com.leverx.projectmanagement.service.ProjectService;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -64,5 +65,11 @@ public class ProjectController {
       @RequestBody ProjectDTO project) {
     Project updatedProject = projectService.update(project, id);
     return ResponseEntity.ok(updatedProject);
+  }
+
+  @GetMapping("/status_count")
+  public ResponseEntity<Map<String, Long>> getProjectCountByStatus() {
+    Map<String, Long> counts = projectService.getProjectCountByStatus();
+    return ResponseEntity.ok(counts);
   }
 }

@@ -15,6 +15,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -181,6 +182,23 @@ public class ProjectService {
     }
 
     return revenueByMonth;
+  }
+
+  public Map<String, Long> getProjectCountByStatus() {
+    List<Object[]> results = projectRepository.countProjectsByStatus();
+
+    Map<String, Long> statusCountMap = new LinkedHashMap<>();
+    long total = 0;
+
+    for (Object[] row : results) {
+      ProjectStatus status = (ProjectStatus) row[0];
+      Long count = (Long) row[1];
+      statusCountMap.put(status.name(), count);
+      total += count;
+    }
+
+    statusCountMap.put("TOTAL", total);
+    return statusCountMap;
   }
 
   private Double calculateDeviation(Project p) {
