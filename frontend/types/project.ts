@@ -14,9 +14,30 @@ export type Project = {
   category: Category;
 };
 
+export type CreateProject = {
+  projectName: string;
+  revenue: number;
+  startDate: string;
+  endDate: string;
+  workingDays: number;
+  categoryId: Category['id'];
+  status: ProjectStatus;
+  actualRate: number;
+};
+
 export type Category = {
   id: number;
   name: string;
 };
 
 export type ProjectStatus = (typeof STATUSES)[keyof typeof STATUSES];
+
+export interface DelayedProjectChartData {
+  pmName: string;
+  projects: {
+    projectName: string;
+    plannedRate: number;
+    actualRate: number;
+    deviationPercentage: number;
+  }[];
+}

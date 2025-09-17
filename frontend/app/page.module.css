@@ -1,4 +1,6 @@
-.wrapper {
-    padding: 16px;
-    margin-left: 36px;
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
 }

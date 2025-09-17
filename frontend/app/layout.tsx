@@ -2,9 +2,9 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 
 import React from 'react';
-import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core';
-import { theme } from '../theme';
-import MainAppShell from "@/components/AppShell/AppShell";
+import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
+import MainAppShell from '@/components/AppShell/AppShell';
+import { Providers } from '@/providers/providers';
 
 export const metadata = {
   title: 'Offshoring POC',
@@ -23,9 +23,9 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body>
-        <MantineProvider theme={theme}>
+        <Providers>
           <MainAppShell>{children}</MainAppShell>
-        </MantineProvider>
+        </Providers>
       </body>
     </html>
   );

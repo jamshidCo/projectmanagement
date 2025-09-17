@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { Box, Button, Center, CloseButton, Flex, Modal, Title } from '@mantine/core';
+import { Box, Button, Flex, LoadingOverlay, Modal } from '@mantine/core';
 
 type Props = {
   opened: boolean;
@@ -9,39 +9,66 @@ type Props = {
   onApply?: () => void;
   title: string;
   children: ReactNode;
+  isApplyDisabled?: boolean;
+  isLoading?: boolean;
 };
 
-export const CustomModal = ({ opened, onClose, onApply, title, children }: Props) => {
+export const CustomModal = ({
+  opened,
+  onClose,
+  onApply,
+  title,
+  children,
+  isApplyDisabled,
+  isLoading,
+}: Props) => {
   return (
     <Modal
       opened={opened}
       onClose={onClose}
       centered
-      overlayProps={{
-        backgroundOpacity: 0.55,
-        blur: 3,
+      size="lg"
+      radius="lg"
+      overlayProps={{ backgroundOpacity: 0.4, blur: 4 }}
+      styles={{
+        content: {
+          padding: 0,
+          borderRadius: '16px',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+        },
+        body: { padding: '24px' },
+        title: {
+          // fontSize: '14px',
+          fontWeight: '600',
+          marginLeft: 24,
+        },
+        header: {
+          borderBottom: '1px solid #f1f3f5',
+        },
       }}
-      withCloseButton={false}
-      padding={0}
-      size="xl"
+      title={title}
     >
-      <Flex bg="#9BB2D4" justify="space-between" align="center" direction="row" p="5px">
-        <Box w="100%">
-          <Center>
-            <Title order={3} c="white">
-              {title}
-            </Title>
-          </Center>
-        </Box>
-        <CloseButton onClick={onClose} radius="xs" bg="white" />
-      </Flex>
-      <Flex bg="#CAD9EF" p="xs" direction="column" gap="md">
+      <LoadingOverlay visible={isLoading} />
+
+      <Box px="md" pb="xl">
         {children}
-      </Flex>
-      <Flex bg="#BDCDE3" justify="end" align="center" direction="row" p="5px" h="40px">
+      </Box>
+
+      <Flex
+        justify="flex-end"
+        align="center"
+        gap="sm"
+        py="md"
+        px="md"
+        pb={0}
+        style={{ borderTop: '1px solid #f1f3f5' }}
+      >
+        <Button variant="light" color="gray" onClick={onClose}>
+          Cancel
+        </Button>
         {onApply && (
-          <Button onClick={onApply} variant="default" color="gray" radius="md">
-            APPLY
+          <Button onClick={onApply} disabled={isApplyDisabled} radius="md">
+            Apply
           </Button>
         )}
       </Flex>

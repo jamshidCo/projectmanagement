@@ -34,9 +34,7 @@ export default function MainAppShell({ children }: { children: ReactNode }) {
             onClick={() => setCollapsed((prevState) => !prevState)}
             size="sm"
           />
-          <span className={styles.headerTitle}>
-            {activeNavItem?.label || 'Offshoring POC'}
-          </span>
+          <span className={styles.headerTitle}>{activeNavItem?.label || 'Offshoring POC'}</span>
         </div>
       </AppShell.Header>
 

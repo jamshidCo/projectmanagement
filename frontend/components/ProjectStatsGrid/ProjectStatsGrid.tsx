@@ -1,16 +1,17 @@
 import { IconCircleCheck, IconClock, IconList, IconLoader2, IconX } from '@tabler/icons-react';
-import { Flex } from '@mantine/core';
+import { Flex, Loader } from '@mantine/core';
 import { ProjectStatsCard } from '@/components/ProjectStatsCard/ProjectStatsCard';
 import { STATUSES } from '@/constants/statuses';
-import { ProjectStatus } from '@/types/project';
-
-const totalStats = {
-  label: 'Total Projects',
-  icon: <IconList size={24} />,
-  color: 'gray',
-};
+import { StatusCountResponse, useProjectStatusCounts } from '@/hooks/useProjects';
+import styles from './ProjectStatsGrid.module.css';
 
 const statusStats = [
+  {
+    status: 'TOTAL',
+    label: 'Total Projects',
+    icon: <IconList size={24} />,
+    color: 'gray',
+  },
   {
     status: STATUSES.PLANNED,
     label: 'Planned',
@@ -32,23 +33,27 @@ const statusStats = [
   { status: STATUSES.DELAYED, label: 'Delayed', icon: <IconX size={24} />, color: 'red' },
 ];
 
-export function ProjectStatsGrid({
-  total,
-  statusCounts,
-}: {
-  total: number;
-  statusCounts: Record<ProjectStatus, number>;
-}) {
-  const statsWithValues = statusStats.map((stat) => ({
+export function ProjectStatsGrid() {
+  const { data: statusCounts, isLoading } = useProjectStatusCounts();
+
+  if (isLoading) {
+    return (
+      <div className={styles.loader}>
+        <Loader color="blue" />
+      </div>
+    );
+  }
+
+
+  const stats = statusStats.map((stat) => ({
     ...stat,
-    value: statusCounts[stat.status] || 0,
+    value: statusCounts?.[stat.status as keyof StatusCountResponse] ?? 0,
   }));
-  const stats = [{ ...totalStats, value: total }, ...statsWithValues];
 
   return (
     <Flex gap="md" justify="space-between" wrap="nowrap" direction="row" mb={16}>
       {stats.map((stat) => (
-        <ProjectStatsCard {...stat} />
+        <ProjectStatsCard key={stat.label} {...stat} />
       ))}
     </Flex>
   );

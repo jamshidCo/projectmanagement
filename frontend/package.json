@@ -25,11 +25,14 @@
     "@mantine/hooks": "8.3.1",
     "@next/bundle-analyzer": "^15.5.3",
     "@tabler/icons-react": "^3.34.1",
+    "@tanstack/react-query": "^5.89.0",
+    "@tanstack/react-query-devtools": "^5.89.0",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.18",
     "next": "15.5.3",
     "react": "19.1.1",
-    "react-dom": "19.1.1"
+    "react-dom": "19.1.1",
+    "recharts": "^3.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
