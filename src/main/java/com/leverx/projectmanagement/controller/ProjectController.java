@@ -3,8 +3,11 @@ package com.leverx.projectmanagement.controller;
 import com.leverx.projectmanagement.dto.ProjectDTO;
 import com.leverx.projectmanagement.model.Project;
 import com.leverx.projectmanagement.service.ProjectService;
-import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,8 +31,13 @@ public class ProjectController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Project>> getAllProjects() {
-    return ResponseEntity.ok(projectService.getAllProjects());
+  public ResponseEntity<Page<Project>> getAllProjects(
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(defaultValue = "id") String sortBy
+  ) {
+    Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+    return ResponseEntity.ok(projectService.getAllProjects(pageable));
   }
 
   @GetMapping("/{id}")

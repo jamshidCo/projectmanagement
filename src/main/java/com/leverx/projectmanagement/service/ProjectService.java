@@ -11,11 +11,17 @@ import com.leverx.projectmanagement.model.ProjectStatus;
 import com.leverx.projectmanagement.repository.ProjectCategoryRepository;
 import com.leverx.projectmanagement.repository.ProjectRepository;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,8 +36,8 @@ public class ProjectService {
     this.projectCategoryRepository = projectCategoryRepository;
   }
 
-  public List<Project> getAllProjects() {
-    return projectRepository.findAll();
+  public Page<Project> getAllProjects(Pageable pageable) {
+    return projectRepository.findAll(pageable);
   }
 
   public Optional<Project> getProjectById(Long id) {
@@ -132,6 +138,49 @@ public class ProjectService {
     return grouped.entrySet().stream()
         .map(entry -> new DelayedProjectsByPmDTO(entry.getKey(), entry.getValue()))
         .collect(Collectors.toList());
+  }
+
+  public Map<YearMonth, BigDecimal> getMonthlyRevenueDistribution() {
+    List<Project> projects = projectRepository.findAll();
+
+    Map<YearMonth, BigDecimal> revenueByMonth = new TreeMap<>();
+
+    for (Project project : projects) {
+      LocalDate startDate = project.getStartDate();
+      LocalDate endDate = project.getEndDate();
+      BigDecimal totalRevenue = project.getRevenue();
+
+      if (startDate == null || endDate == null || totalRevenue == null) {
+        continue;
+      }
+
+      long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+      YearMonth startMonth = YearMonth.from(startDate);
+      YearMonth endMonth = YearMonth.from(endDate);
+
+      YearMonth currentMonth = startMonth;
+
+      while (!currentMonth.isAfter(endMonth)) {
+        LocalDate monthStart = currentMonth.atDay(1);
+        LocalDate monthEnd = currentMonth.atEndOfMonth();
+
+        LocalDate effectiveStart = startDate.isAfter(monthStart) ? startDate : monthStart;
+        LocalDate effectiveEnd = endDate.isBefore(monthEnd) ? endDate : monthEnd;
+
+        long daysInMonth = ChronoUnit.DAYS.between(effectiveStart, effectiveEnd) + 1;
+
+        BigDecimal proportion = BigDecimal.valueOf(daysInMonth)
+            .divide(BigDecimal.valueOf(totalDays), 6, RoundingMode.HALF_UP);
+
+        BigDecimal monthlyRevenue = totalRevenue.multiply(proportion).setScale(2, RoundingMode.HALF_UP);
+
+        revenueByMonth.merge(currentMonth, monthlyRevenue, BigDecimal::add);
+
+        currentMonth = currentMonth.plusMonths(1);
+      }
+    }
+
+    return revenueByMonth;
   }
 
   private Double calculateDeviation(Project p) {
