@@ -1,17 +1,30 @@
-# Lightweight Node base image
-FROM node:20-alpine
-
-# Work directory inside container
+# Frontend Dockerfile (multi-stage)
+FROM node:20-alpine AS deps
 WORKDIR /app
+COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
+# Install (prefers package-lock if present)
+RUN if [ -f package-lock.json ]; then npm ci --legacy-peer-deps; \
+    else npm install --legacy-peer-deps; fi
 
-# Create a simple placeholder server (remove once real frontend exists)
-RUN printf 'const http=require("http");const p=3000;http.createServer((q,r)=>{r.end("Frontend placeholder running on port "+p);}).listen(p,()=>console.log("Dummy frontend started on",p));\n' > server.js
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
 
-# Non-root user for safety
-RUN addgroup -S app && adduser -S app -G app
-USER app
+# Prune dev dependencies after build (retain only production)
+RUN npm prune --production
+
+FROM gcr.io/distroless/nodejs20-debian12:nonroot AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Copy standalone output (reduces image size) and public assets
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+COPY --from=build /app/public ./public
 
 EXPOSE 3000
-
-# Start the placeholder server
-CMD ["node","server.js"]
+CMD ["server.js"]

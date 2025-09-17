@@ -13,9 +13,11 @@ type Props = {
   onClose: () => void;
 };
 
+type Status = (typeof STATUSES)[keyof typeof STATUSES];
+
 export const CreateProjectModal = ({ opened, onClose }: Props) => {
   const [name, setName] = useState('');
-  const [status, setStatus] = useState(STATUSES.COMPLETED);
+  const [status, setStatus] = useState<Status>(STATUSES.COMPLETED);
   const [revenue, setRevenue] = useState<number>();
   const [fromDate, setFromDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export const CreateProjectModal = ({ opened, onClose }: Props) => {
           <NativeSelect
             label="Project type"
             value={status}
-            onChange={(event) => setStatus(event.currentTarget.value)}
+            onChange={(event) => setStatus(event.currentTarget.value as Status)}
             data={Object.values(STATUSES)}
           />
           <NumberInput
