@@ -95,9 +95,13 @@ public class ProjectService {
   public BigDecimal getTotalRevenueForYear(int year) {
     LocalDate startOfYear = LocalDate.of(year, 1, 1);
     LocalDate endOfYear = LocalDate.of(year, 12, 31);
-    Optional<BigDecimal> totalRevenue = projectRepository.getTotalRevenueBetween(startOfYear,
-        endOfYear);
-    return totalRevenue.orElse(BigDecimal.ZERO);
+
+    return projectRepository.findAll().stream()
+        .filter(project -> !project.getStartDate().isAfter(endOfYear)
+            && !project.getEndDate().isBefore(startOfYear))
+        .map(Project::getRevenue)
+        .reduce(BigDecimal.ZERO, BigDecimal::add)
+        .setScale(2, RoundingMode.HALF_UP);
   }
 
   public List<ProjectCategoryGroupDTO> getProjectsGroupedByCategory() {
